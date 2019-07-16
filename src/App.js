@@ -1,26 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './bootstrap.min.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+// components
+import { Header } from './components/Header';
+import NewAppointment from './components/NewAppointment';
+
+class App extends React.Component {
+
+	state = {
+		appointments: []
+	}
+
+	createNewAppointment = ( appointment ) => {
+		console.log( 'new appointment created', appointment );
+		this.setState( {
+			appointments: [...this.state.appointments, appointment]
+		} );
+	}
+
+  	render() {
+		return (
+			<div className="container">
+				<Header title="Pets Clinic Appoitments" />
+				<NewAppointment createNewAppointment={ this.createNewAppointment } />
+			</div>
+		);
+  	}
 }
 
 export default App;
