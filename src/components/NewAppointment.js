@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import Uuid from 'uuid/v4';
+import PropTypes from 'prop-types';
 
 export default class NewAppointment extends Component {
     state = {
         appointment: {
-            petName: 'Shaggy',
-            cxName: 'Ale',
+            petName: '',
+            cxName: '',
             date: '',
             time: '',
             sympton: ''
@@ -19,18 +20,18 @@ export default class NewAppointment extends Component {
                 ...this.state.appointment, // spreat operator
                 [ e.target.name ]: e.target.value
             }
+        }, () => {
+            let { petName, cxName, date, time, sympton } = this.state.appointment;
+            if ( petName === '' || cxName === '' || date === '' || time === '' || sympton === '' ) {
+                this.setState( {
+                    error: true
+                } );
+            } else {
+                this.setState( {
+                    error: false
+                } );
+            }
         } );
-        let { petName, cxName, date, time, sympton } = this.state.appointment;
-
-        if ( petName === '' || cxName === '' || date === '' || time === '' || sympton === '' ) {
-            this.setState( {
-                error: true
-            } );
-        } else {
-            this.setState( {
-                error: false
-            } );
-        }
     }
 
     onSubmit = ( e ) => {
@@ -45,16 +46,28 @@ export default class NewAppointment extends Component {
                 }
             }, () => {
                 this.props.createNewAppointment( this.state.appointment );
+                this.setState( {
+                    appointment: {
+                        petName: '',
+                        cxName: '',
+                        date: '',
+                        time: '',
+                        sympton: ''
+                    },
+                    error: true
+                } );
             } );
         }
     }
 
     render() {
+        let { error } = this.state;
+        
         return (
             <div className="card my-4">
                 <div className="card-body">
                     <h5 className="text-center my-4">Llene el formulario para crear nueva cita</h5>
-                    <form onSubmit={ this.onSubmit }>
+                    <form onSubmit={ this.onSubmit } className="container">
                         <div className="form-group row align-items-center">
                             <label htmlFor="pet-name" className="col-3">Pet Name</label>
                             <input 
@@ -62,6 +75,7 @@ export default class NewAppointment extends Component {
                                 name="petName" 
                                 className="form-control col-9" 
                                 id="pet-name" 
+                                placeholder="pet name..."
                                 onChange={ this.onChange }
                                 value={ this.state.appointment.petName } 
                             />
@@ -79,16 +93,24 @@ export default class NewAppointment extends Component {
                             />
                         </div>
                         <div className="form-group row">
-                            <label htmlFor="" className="col-3">Date</label>
-                            <input type="date" name="date" className="form-control col-3" onChange={ this.onChange } />
-                            <label htmlFor="" className="col-3">Time</label>
-                            <input 
-                                type="time" 
-                                name="time" 
-                                className="form-control col-3" 
-                                onChange= { this.onChange } 
-                                value={ this.state.appointment.time }    
-                            />
+                                <label htmlFor="" className="col-3">Date</label>
+                                <input 
+                                    type="date" 
+                                    name="date" 
+                                    className="form-control col-9" 
+                                    onChange={ this.onChange } 
+                                    value={ this.state.appointment.date }
+                                />
+                        </div>
+                        <div className="form-group row">
+                                <label htmlFor="" className="col-3">Time</label>
+                                <input 
+                                    type="time" 
+                                    name="time" 
+                                    className="form-control col-9" 
+                                    onChange= { this.onChange } 
+                                    value={ this.state.appointment.time }    
+                                />
                         </div>
                         <div className="form-group row align-items-center">
                             <label htmlFor="symptom" className="col-3">Symptom</label>
@@ -106,13 +128,20 @@ export default class NewAppointment extends Component {
                             <input 
                                 type="submit" 
                                 value="Add new appointment" 
-                                className="btn btn-primary btn-block" 
+                                className="btn btn-primary btn-block col-12" 
                                 disabled= { this.state.error}
                             />
+                            {
+                                error ? <p className="alert alert-warning text-center my-2 col-12 alert-btn">*All field have to be set</p> : null
+                            }
                         </div>
                     </form>
                 </div>
             </div>
         )
     }
+}
+
+NewAppointment.propTypes = {
+    createNewAppointment: PropTypes.func.isRequired
 }
